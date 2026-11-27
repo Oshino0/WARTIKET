@@ -23,8 +23,8 @@
       <div style="margin: 16px 0; padding: 16px; border: 1px solid {{ $frame }}; border-radius: 12px; text-align: center;">
         <p style="margin: 0 0 12px;">Kode tiket: <strong>{{ $ticket->ticket_code }}</strong></p>
         <img src="{{ $message->embedData($qrCodes[$ticket->id], 'ticket-'.$ticket->id.'.png', 'image/png') }}"
-             width="280" height="280" alt="QR code {{ $ticket->ticket_code }}"
-             style="display: block; margin: 0 auto; width: 280px; max-width: 100%; height: auto; border: 0;">
+             width="520" alt="E-ticket {{ $item->product_name_snapshot }} — {{ $item->ticket_type_name_snapshot }} — {{ $ticket->ticket_code }}"
+             style="display: block; margin: 0 auto; width: 520px; max-width: 100%; height: auto; border: 0;">
       </div>
     @endforeach
   @endforeach

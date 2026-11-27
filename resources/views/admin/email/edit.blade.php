@@ -12,21 +12,21 @@
         @include('admin.email._text-fields')
 
         <fieldset class="space-y-4 border-t border-violet-100 pt-5">
-          <legend class="text-sm font-bold">Latar belakang QR code</legend>
+          <legend class="text-sm font-bold">Gambar header e-tiket</legend>
 
           @if ($template['qr_background'])
             <div class="flex items-center gap-4">
-              <img src="{{ \Illuminate\Support\Facades\Storage::disk('public')->url($template['qr_background']) }}" alt="Latar QR saat ini" class="h-24 w-24 rounded-xl border border-violet-100 object-cover">
+              <img src="{{ \Illuminate\Support\Facades\Storage::disk('public')->url($template['qr_background']) }}" alt="Gambar header tiket saat ini" class="h-24 w-24 rounded-xl border border-violet-100 object-cover">
               <label class="flex items-center gap-2 text-sm">
                 <input type="checkbox" name="remove_qr_background" value="1" class="rounded border-gray-300 text-brand focus:ring-brand">
-                Hapus latar ini (QR tampil polos)
+                Hapus gambar header (pakai warna acara)
               </label>
             </div>
           @endif
 
-          <x-field :label="$template['qr_background'] ? 'Ganti gambar latar' : 'Unggah gambar latar'" name="qr_background" type="file"
+          <x-field :label="$template['qr_background'] ? 'Ganti gambar header' : 'Unggah gambar header'" name="qr_background" type="file"
                    accept="image/png,image/jpeg,image/webp"
-                   hint="JPG, PNG, atau WebP. Minimal 300×300 px, maksimal 3 MB. Gambar dipotong menjadi persegi, QR ditaruh di tengah." />
+                   hint="JPG, PNG, atau WebP. Minimal 300×300 px, maksimal 3 MB. Gambar potret ditampilkan utuh di panel tiket; gambar persegi atau lanskap menjadi banner." />
         </fieldset>
 
         <div class="flex flex-wrap gap-3">
@@ -34,7 +34,7 @@
         </div>
       </form>
 
-      <form action="{{ route('admin.email.reset') }}" method="POST" class="mt-4" onsubmit="return confirm('Kembalikan semua pengaturan email ke awal? Gambar latar juga dihapus.')">
+      <form action="{{ route('admin.email.reset') }}" method="POST" class="mt-4" onsubmit="return confirm('Kembalikan semua pengaturan email ke awal? Gambar header juga dihapus.')">
         @csrf
         <button class="btn btn-danger">Kembalikan ke pengaturan awal</button>
       </form>

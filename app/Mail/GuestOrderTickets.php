@@ -76,8 +76,19 @@ class GuestOrderTickets extends Mailable
         $qrCodes = [];
 
         foreach ($this->order->items as $item) {
+            $product = $item->ticketType?->product;
+
             foreach ($item->tickets as $ticket) {
-                $qrCodes[$ticket->id] = TicketQrImage::png($ticket->qr_token, $itemTemplates[$item->id]);
+                $qrCodes[$ticket->id] = TicketQrImage::png($ticket->qr_token, $itemTemplates[$item->id], [
+                    'event' => $item->product_name_snapshot,
+                    'ticket_type' => $item->ticket_type_name_snapshot,
+                    'date' => $product?->start_at?->translatedFormat('d M Y, H:i') ?? 'Jadwal belum ditentukan',
+                    'location' => $product?->location ?: 'Lokasi belum ditentukan',
+                    'holder' => $this->order->buyer_name,
+                    'phone' => $this->order->buyer_phone,
+                    'ticket_code' => $ticket->ticket_code,
+                    'order_number' => $this->order->order_number,
+                ]);
             }
         }
 

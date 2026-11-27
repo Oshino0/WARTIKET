@@ -133,13 +133,18 @@ class GuestCheckoutTest extends TestCase
         // PNG, not SVG: Gmail/Outlook/Apple Mail show SVG images as broken.
         $this->assertStringNotContainsString('image/svg+xml', $html);
         $this->assertStringContainsString('data:image/png;base64,', $html);
-        preg_match('/data:image\/png;base64,([A-Za-z0-9+\/=\s]+)/', $html, $qrImage);
-        $encodedQr = preg_replace('/\s+/', '', $qrImage[1] ?? '');
+        preg_match_all('/data:image\/png;base64,([A-Za-z0-9+\/=\s]+?)"/', $html, $ticketImages);
+        $encodedQr = preg_replace('/\s+/', '', $ticketImages[1][0] ?? '');
         $this->assertNotSame('', $encodedQr);
         $decodedQr = base64_decode($encodedQr, true);
         $this->assertIsString($decodedQr);
         $this->assertSame("\x89PNG\r\n\x1a\n", substr($decodedQr, 0, 8));
-        $this->assertSame(2, preg_match_all('/data:image\/png;base64,/', $html), 'one QR image per ticket');
+        $this->assertCount(2, $ticketImages[1], 'one e-ticket image per ticket');
+        $dimensions = array_map(
+            fn ($image) => array_slice(getimagesizefromstring(base64_decode(preg_replace('/\s+/', '', $image))), 0, 2),
+            $ticketImages[1],
+        );
+        $this->assertSame([[800, 1000], [800, 1000]], $dimensions);
         foreach ($ticketCodes as $ticketCode) {
             $this->assertStringContainsString($ticketCode, $html);
         }

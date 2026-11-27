@@ -88,9 +88,11 @@ class ProductEmailSettingsTest extends TestCase
 
         preg_match_all('/data:image\/png;base64,([A-Za-z0-9+\/=\s]+?)"/', $html, $matches);
         $this->assertCount(2, $matches[1]);
-        $sizes = array_map(fn ($b64) => getimagesizefromstring(base64_decode(preg_replace('/\s+/', '', $b64)))[0], $matches[1]);
-        $this->assertContains(640, $sizes, 'the concert ticket sits on its background image');
-        $this->assertNotSame([640, 640], $sizes, 'the seminar ticket stays a plain QR');
+        $dimensions = array_map(
+            fn ($b64) => array_slice(getimagesizefromstring(base64_decode(preg_replace('/\s+/', '', $b64))), 0, 2),
+            $matches[1],
+        );
+        $this->assertSame([[800, 1000], [800, 1000]], $dimensions, 'each event receives a complete e-ticket image');
     }
 
     public function test_background_modes_global_custom_and_none(): void

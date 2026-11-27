@@ -36,7 +36,16 @@ class SampleOrder
         return [
             'order' => $order,
             'template' => $template,
-            'qrCodes' => [1 => TicketQrImage::png($ticket->qr_token, $template)],
+            'qrCodes' => [1 => TicketQrImage::png($ticket->qr_token, $template, [
+                'event' => $eventName,
+                'ticket_type' => 'Reguler',
+                'date' => '12 Des 2026, 19.00',
+                'location' => 'Jakarta',
+                'holder' => $order->buyer_name,
+                'phone' => '081234567890',
+                'ticket_code' => $ticket->ticket_code,
+                'order_number' => $order->order_number,
+            ])],
             'message' => new PreviewMessage,
         ];
     }
