@@ -144,7 +144,7 @@ class GuestCheckoutTest extends TestCase
             fn ($image) => array_slice(getimagesizefromstring(base64_decode(preg_replace('/\s+/', '', $image))), 0, 2),
             $ticketImages[1],
         );
-        $this->assertSame([[800, 1000], [800, 1000]], $dimensions);
+        $this->assertSame([[1320, 560], [1320, 560]], $dimensions);
         foreach ($ticketCodes as $ticketCode) {
             $this->assertStringContainsString($ticketCode, $html);
         }

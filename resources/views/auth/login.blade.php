@@ -2,7 +2,7 @@
 @section('title', 'Masuk')
 @section('content')
   <div class="mx-auto max-w-md">
-    <h1 class="text-2xl font-bold">Masuk ke WARTIKET</h1>
+    <h1 class="text-2xl font-bold">Masuk ke JualTiket</h1>
     <p class="mt-1 text-sm text-gray-500">Masuk dengan akun yang sudah terdaftar.</p>
 
     <form action="{{ url('/login') }}" method="POST" class="mt-6 space-y-4">

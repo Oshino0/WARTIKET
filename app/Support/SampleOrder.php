@@ -6,7 +6,7 @@ use App\Models\Order;
 use App\Models\OrderItem;
 use App\Models\Ticket;
 use App\Models\User;
-use App\Services\TicketQrImage;
+use App\Services\TicketImage;
 
 /** In-memory order used only to preview the ticket e-mail. Nothing here is saved. */
 class SampleOrder
@@ -15,13 +15,13 @@ class SampleOrder
     public static function previewData(User $viewer, array $template, string $eventName = 'Nama Acara Contoh'): array
     {
         $order = new Order([
-            'order_number' => 'WTK-PRATINJAU',
+            'order_number' => 'JT-PRATINJAU',
             'buyer_name' => 'Nama Pembeli',
             'buyer_email' => $viewer->email,
             'total' => 250000,
         ]);
 
-        $ticket = new Ticket(['ticket_code' => 'WTK-PRATINJAU-001', 'qr_token' => 'PRATINJAU-'.str_repeat('X', 38)]);
+        $ticket = new Ticket(['ticket_code' => 'JT-PRATINJAU-001', 'qr_token' => 'PRATINJAU-'.str_repeat('X', 38)]);
         $ticket->id = 1;
 
         $item = new OrderItem([
@@ -36,16 +36,17 @@ class SampleOrder
         return [
             'order' => $order,
             'template' => $template,
-            'qrCodes' => [1 => TicketQrImage::png($ticket->qr_token, $template, [
+            'ticketImages' => [1 => TicketImage::render([
+                'brand' => (string) ($template['ticket_brand'] ?? 'JualTiket'),
                 'event' => $eventName,
-                'ticket_type' => 'Reguler',
-                'date' => '12 Des 2026, 19.00',
-                'location' => 'Jakarta',
-                'holder' => $order->buyer_name,
-                'phone' => '081234567890',
-                'ticket_code' => $ticket->ticket_code,
-                'order_number' => $order->order_number,
-            ])],
+                'type' => 'Reguler',
+                'when' => now()->addDays(14)->locale('id')->translatedFormat('d F Y').' | 19:00',
+                'where' => 'Lokasi Acara Contoh',
+                'buyer' => 'Nama Pembeli',
+                'order' => 'JT-PRATINJAU',
+                'code' => 'JT-PRATINJAU-001',
+                'qr_token' => $ticket->qr_token,
+            ], $template)],
             'message' => new PreviewMessage,
         ];
     }

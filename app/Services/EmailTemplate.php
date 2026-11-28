@@ -23,17 +23,18 @@ class EmailTemplate
     public const KEY = 'email_template';
 
     /** Fields an event can override as text/colour/size. */
-    public const TEXT_KEYS = ['subject', 'heading', 'greeting', 'intro', 'footer', 'accent_color', 'qr_scale'];
+    public const TEXT_KEYS = ['subject', 'heading', 'greeting', 'intro', 'footer', 'ticket_brand', 'accent_color', 'qr_scale'];
 
     public const DEFAULTS = [
         'subject' => 'E-tiket pesanan {nomor_pesanan}',
-        'heading' => 'E-tiket WARTIKET',
+        'heading' => 'E-tiket JualTiket',
         'greeting' => 'Halo {nama}, pesananmu sudah dikonfirmasi.',
         'intro' => '',
         'footer' => 'Tunjukkan QR code tiket saat memasuki acara. Jika gambar tidak tampil, tunjukkan kode tiket di atas kepada petugas.',
+        'ticket_brand' => 'JualTiket', // small name in the corner of the ticket image
         'accent_color' => '#6D28D9',
-        'qr_background' => null, // path on the public disk
-        'qr_scale' => 55,        // QR size as % of the background image
+        'qr_background' => null,      // ticket background image, path on the public disk
+        'qr_scale' => 65,             // QR size on the ticket (40-70)
     ];
 
     public const PLACEHOLDERS = [
@@ -100,6 +101,7 @@ class EmailTemplate
             'greeting' => ['required', 'string', 'max:200'],
             'intro' => ['nullable', 'string', 'max:1000'],
             'footer' => ['nullable', 'string', 'max:1000'],
+            'ticket_brand' => ['nullable', 'string', 'max:30'],
             'accent_color' => ['required', 'regex:/^#[0-9A-Fa-f]{6}$/'],
             'qr_scale' => ['required', 'integer', 'min:40', 'max:70'],
             'qr_background' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:3072', 'dimensions:min_width=300,min_height=300'],
@@ -115,6 +117,7 @@ class EmailTemplate
             'greeting' => $data['greeting'],
             'intro' => $data['intro'] ?? '',   // blank is a valid choice
             'footer' => $data['footer'] ?? '',
+            'ticket_brand' => trim((string) ($data['ticket_brand'] ?? '')) ?: self::DEFAULTS['ticket_brand'],
             'accent_color' => strtoupper($data['accent_color']),
             'qr_scale' => (int) $data['qr_scale'],
         ];

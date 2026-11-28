@@ -10,4 +10,4 @@ Artisan::command('inspire', function () {
 
 // Return stock held by unpaid online-payment orders once their deadline passes.
 // Needs `php artisan schedule:work` (development) or a cron job running `schedule:run` (production).
-Schedule::command('tixora:release-expired')->everyMinute();
+Schedule::command('jualtiket:release-expired')->everyMinute();

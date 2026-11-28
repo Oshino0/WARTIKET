@@ -18,7 +18,10 @@
   <div class="md:flex">
     <aside class="border-b border-violet-100 bg-white md:min-h-screen md:w-60 md:shrink-0 md:border-b-0 md:border-r">
       <div class="flex items-center justify-between px-4 py-4 md:block">
-        <a href="{{ route('admin.dashboard') }}" class="text-xl font-extrabold tracking-tight text-brand">WARTIKET <span class="text-sm font-semibold text-gray-400">admin</span></a>
+        <a href="{{ route('admin.dashboard') }}" class="flex items-center gap-2 text-xl font-extrabold tracking-tight text-brand">
+          <img src="{{ asset('images/logo.png') }}" alt="JualTiket" class="h-8 w-8 object-contain" width="32" height="32">
+          <span>JualTiket <span class="text-sm font-semibold text-gray-400">admin</span></span>
+        </a>
       </div>
       <nav class="flex gap-1 overflow-x-auto px-3 pb-3 md:block md:space-y-1 md:overflow-visible" aria-label="Admin">
         @foreach ($links as [$route, $label, $pattern])

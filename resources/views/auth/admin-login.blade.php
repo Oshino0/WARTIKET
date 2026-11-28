@@ -3,7 +3,10 @@
 <head>@include('layouts.head')</head>
 <body class="flex min-h-screen items-center justify-center bg-brand-surface px-4 font-sans text-brand-ink antialiased">
   <main class="w-full max-w-md rounded-2xl border border-violet-100 bg-white p-6 shadow-sm sm:p-8">
-    <a href="{{ route('home') }}" class="text-xl font-extrabold tracking-tight text-brand">WARTIKET</a>
+    <a href="{{ route('home') }}" class="inline-flex items-center gap-2 text-xl font-extrabold tracking-tight text-brand">
+      <img src="{{ asset('images/logo.png') }}" alt="JualTiket" class="h-9 w-9 object-contain" width="36" height="36">
+      <span>JualTiket</span>
+    </a>
     <h1 class="mt-6 text-2xl font-bold">Masuk admin</h1>
     <p class="mt-1 text-sm text-gray-500">Gunakan akun admin untuk membuka panel pengelolaan.</p>
 

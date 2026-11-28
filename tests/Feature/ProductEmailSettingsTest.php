@@ -67,32 +67,37 @@ class ProductEmailSettingsTest extends TestCase
         $this->assertSame('Judul khusus konser', $concert->product->fresh()->email_template['heading'], 'saved for later');
     }
 
-    public function test_each_ticket_in_an_order_follows_its_own_events_frame_colour_and_qr_background(): void
+    public function test_each_ticket_in_an_order_is_drawn_with_its_own_events_template(): void
     {
         Storage::fake('public');
         $concert = $this->ticketType('Konser Senja');
         $seminar = $this->ticketType('Seminar Laravel');
-        $admin = $this->admin();
 
-        $this->actingAs($admin)->put(route('admin.products.email.update', $concert->product), $this->payload([
+        $this->actingAs($this->admin())->put(route('admin.products.email.update', $concert->product), $this->payload([
             'enabled' => '1',
+            'ticket_brand' => 'SENJA LIVE',
             'accent_color' => '#E11D48',
             'qr_background_mode' => 'custom',
             'qr_background' => UploadedFile::fake()->image('konser.png', 800, 800),
         ]))->assertSessionHasNoErrors();
 
-        $html = (new GuestOrderTickets($this->orderFor([$concert, $seminar])))->render();
+        $order = $this->orderFor([$concert, $seminar]);
+        $html = (new GuestOrderTickets($order))->render();
 
-        $this->assertStringContainsString('border: 1px solid #E11D48', $html);
-        $this->assertStringContainsString('border: 1px solid #6D28D9', $html);
-
+        // one finished e-ticket picture per ticket, each the full ticket size
         preg_match_all('/data:image\/png;base64,([A-Za-z0-9+\/=\s]+?)"/', $html, $matches);
         $this->assertCount(2, $matches[1]);
-        $dimensions = array_map(
-            fn ($b64) => array_slice(getimagesizefromstring(base64_decode(preg_replace('/\s+/', '', $b64))), 0, 2),
-            $matches[1],
+        foreach ($matches[1] as $base64) {
+            $this->assertSame(1320, getimagesizefromstring(base64_decode(preg_replace('/\s+/', '', $base64)))[0]);
+        }
+
+        // the two tickets are drawn from different templates (colour, background, brand)
+        $this->assertNotSame(
+            preg_replace('/\s+/', '', $matches[1][0]),
+            preg_replace('/\s+/', '', $matches[1][1]),
         );
-        $this->assertSame([[800, 1000], [800, 1000]], $dimensions, 'each event receives a complete e-ticket image');
+        $this->assertStringContainsString('Seminar Laravel', $html);
+        $this->assertStringContainsString('Konser Senja', $html);
     }
 
     public function test_background_modes_global_custom_and_none(): void
@@ -187,7 +192,7 @@ class ProductEmailSettingsTest extends TestCase
     {
         return array_merge([
             'subject' => 'E-tiket pesanan {nomor_pesanan}',
-            'heading' => 'E-tiket WARTIKET',
+            'heading' => 'E-tiket JualTiket',
             'greeting' => 'Halo {nama}, pesananmu sudah dikonfirmasi.',
             'intro' => '',
             'footer' => 'Catatan bawah.',

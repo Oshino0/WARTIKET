@@ -22,20 +22,23 @@
   @endforeach
 </p>
 
+<x-field label="Nama di pojok tiket" name="ticket_brand" :value="$template['ticket_brand']" maxlength="30"
+         hint="Tulisan kecil di kiri atas gambar tiket, misalnya nama penyelenggara." />
+
 <div>
-  <label for="accent_color" class="mb-1 block text-sm font-medium">Warna judul dan bingkai tiket</label>
+  <label for="accent_color" class="mb-1 block text-sm font-medium">Warna tiket dan judul email</label>
   <input id="accent_color" name="accent_color" type="color" value="{{ old('accent_color', $template['accent_color']) }}"
          class="h-10 w-20 cursor-pointer rounded-lg border border-gray-300 bg-white p-1">
   @error('accent_color')<p class="mt-1 text-sm text-red-600">{{ $message }}</p>@enderror
 </div>
 
 <div>
-  <label for="qr_scale" class="mb-1 block text-sm font-medium">Ukuran QR di atas latar</label>
+  <label for="qr_scale" class="mb-1 block text-sm font-medium">Ukuran QR di tiket</label>
   <select id="qr_scale" name="qr_scale" class="input max-w-xs">
     @foreach ([45 => 'Kecil (45%)', 55 => 'Sedang (55%)', 65 => 'Besar (65%)', 70 => 'Sangat besar (70%)'] as $value => $label)
       <option value="{{ $value }}" @selected((int) old('qr_scale', $template['qr_scale']) === $value)>{{ $label }}</option>
     @endforeach
   </select>
   @error('qr_scale')<p class="mt-1 text-sm text-red-600">{{ $message }}</p>@enderror
-  <p class="mt-1 text-xs text-gray-500">QR tetap memiliki bingkai putih agar mudah dipindai. Coba scan hasilnya dari layar HP sebelum dipakai.</p>
+  <p class="mt-1 text-xs text-gray-500">QR selalu berlatar putih agar mudah dipindai. Coba scan tiket dari layar HP sebelum dipakai.</p>
 </div>

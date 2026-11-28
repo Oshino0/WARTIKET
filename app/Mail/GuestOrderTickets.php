@@ -4,7 +4,7 @@ namespace App\Mail;
 
 use App\Models\Order;
 use App\Services\EmailTemplate;
-use App\Services\TicketQrImage;
+use App\Services\TicketImage;
 use Illuminate\Bus\Queueable;
 use Illuminate\Mail\Mailable;
 use Illuminate\Mail\Mailables\Content;
@@ -38,7 +38,7 @@ class GuestOrderTickets extends Mailable
             with: [
                 'template' => $this->primaryTemplate(),
                 'itemTemplates' => $itemTemplates,
-                'qrCodes' => $this->qrCodes($itemTemplates),
+                'ticketImages' => $this->ticketImages($itemTemplates),
             ],
         );
     }
@@ -67,31 +67,25 @@ class GuestOrderTickets extends Mailable
     }
 
     /**
-     * One PNG per ticket, keyed by ticket id (PNG because e-mail apps do not show SVG).
+     * One finished e-ticket picture (PNG) per ticket, keyed by ticket id. PNG because e-mail apps do not
+     * show SVG; the whole ticket is drawn into the image because they also ignore CSS backgrounds.
      *
      * @return array<int, string> raw PNG bytes
      */
-    private function qrCodes(array $itemTemplates): array
+    private function ticketImages(array $itemTemplates): array
     {
-        $qrCodes = [];
+        $images = [];
 
         foreach ($this->order->items as $item) {
-            $product = $item->ticketType?->product;
-
             foreach ($item->tickets as $ticket) {
-                $qrCodes[$ticket->id] = TicketQrImage::png($ticket->qr_token, $itemTemplates[$item->id], [
-                    'event' => $item->product_name_snapshot,
-                    'ticket_type' => $item->ticket_type_name_snapshot,
-                    'date' => $product?->start_at?->translatedFormat('d M Y, H:i') ?? 'Jadwal belum ditentukan',
-                    'location' => $product?->location ?: 'Lokasi belum ditentukan',
-                    'holder' => $this->order->buyer_name,
-                    'phone' => $this->order->buyer_phone,
-                    'ticket_code' => $ticket->ticket_code,
-                    'order_number' => $this->order->order_number,
-                ]);
+                $template = $itemTemplates[$item->id];
+                $images[$ticket->id] = TicketImage::render(
+                    TicketImage::detailsFor($this->order, $item, $ticket, $template),
+                    $template,
+                );
             }
         }
 
-        return $qrCodes;
+        return $images;
     }
 }

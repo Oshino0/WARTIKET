@@ -7,7 +7,10 @@
   <header class="border-b border-violet-100">
     <div class="mx-auto grid max-w-6xl grid-cols-[1fr_auto] items-center gap-x-4 gap-y-3 px-4 pb-3 pt-6 lg:grid-cols-[minmax(0,1fr)_minmax(18rem,28rem)_minmax(0,1fr)] xl:grid-cols-[minmax(0,1fr)_minmax(20rem,34rem)_minmax(0,1fr)]">
       <div class="flex items-center gap-4">
-        <a href="{{ route('home') }}" class="text-xl font-extrabold tracking-tight text-brand">WARTIKET</a>
+        <a href="{{ route('home') }}" class="flex items-center gap-2 text-xl font-extrabold tracking-tight text-brand">
+          <img src="{{ asset('images/logo.png') }}" alt="JualTiket" class="h-9 w-9 object-contain" width="36" height="36">
+          <span>JualTiket</span>
+        </a>
         <nav class="hidden items-center gap-5 text-sm font-semibold lg:flex" aria-label="Utama">
           <a href="{{ route('explore') }}" class="text-gray-700 transition hover:text-brand">Jelajahi</a>
         </nav>
@@ -33,7 +36,7 @@
   </main>
 
   <footer class="mt-16 border-t border-violet-100">
-    <div class="mx-auto max-w-6xl px-4 py-8 text-sm text-gray-500">WARTIKET – tiket konser, olahraga, bioskop, kuliner, seminar, dan wisata.</div>
+    <div class="mx-auto max-w-6xl px-4 py-8 text-sm text-gray-500">JualTiket – tiket konser, olahraga, bioskop, kuliner, seminar, dan wisata.</div>
   </footer>
 </body>
 </html>

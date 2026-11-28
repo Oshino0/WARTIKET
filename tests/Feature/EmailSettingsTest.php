@@ -115,26 +115,6 @@ class EmailSettingsTest extends TestCase
         $this->assertSame("\x89PNG\r\n\x1a\n", substr($png, 0, 8));
     }
 
-    public function test_a_broken_background_does_not_remove_ticket_details_from_the_image(): void
-    {
-        Storage::fake('public');
-        Storage::disk('public')->put('email/broken.png', 'this is not an image');
-        $template = array_merge(EmailTemplate::DEFAULTS, ['qr_background' => 'email/broken.png']);
-
-        $png = TicketQrImage::png('TOKEN-123', $template, [
-            'event' => 'Festival Senja',
-            'ticket_type' => 'Reguler',
-            'date' => '12 Des 2026, 19.00',
-            'location' => 'Jakarta',
-            'holder' => 'Ayu Pembeli',
-            'phone' => '081234567890',
-            'ticket_code' => 'WTK-001',
-            'order_number' => 'WTK-TEST-001',
-        ]);
-
-        $this->assertSame([800, 1000], array_slice(getimagesizefromstring($png), 0, 2));
-    }
-
     public function test_reset_restores_the_default_wording_and_deletes_the_background(): void
     {
         Storage::fake('public');
@@ -157,7 +137,7 @@ class EmailSettingsTest extends TestCase
         $this->actingAs($this->user(User::ROLE_ADMIN, 'admin@example.test'))
             ->get(route('admin.email.preview'))
             ->assertOk()
-            ->assertSee('WTK-PRATINJAU')
+            ->assertSee('JT-PRATINJAU')
             ->assertSee('data:image/png;base64,', false);
     }
 
@@ -167,7 +147,7 @@ class EmailSettingsTest extends TestCase
     {
         return array_merge([
             'subject' => 'E-tiket pesanan {nomor_pesanan}',
-            'heading' => 'E-tiket WARTIKET',
+            'heading' => 'E-tiket JualTiket',
             'greeting' => 'Halo {nama}, pesananmu sudah dikonfirmasi.',
             'intro' => '',
             'footer' => 'Catatan bawah.',

@@ -7,7 +7,7 @@ use Illuminate\Console\Command;
 
 class ReleaseExpiredOrders extends Command
 {
-    protected $signature = 'tixora:release-expired';
+    protected $signature = 'jualtiket:release-expired';
 
     protected $description = 'Expire unpaid orders past their deadline and return reserved stock';
 

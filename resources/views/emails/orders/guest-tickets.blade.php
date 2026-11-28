@@ -2,7 +2,7 @@
   $accent = $template['accent_color'];
   $fill = fn (string $text) => \App\Services\EmailTemplate::fill($text, $order);
 @endphp
-<div style="font-family: Arial, Helvetica, sans-serif; color: #1F2937; max-width: 560px; margin: 0 auto;">
+<div style="font-family: Arial, Helvetica, sans-serif; color: #1F2937; max-width: 600px; margin: 0 auto;">
   <h1 style="font-size: 22px; color: {{ $accent }};">{{ $fill($template['heading']) }}</h1>
   <p>{{ $fill($template['greeting']) }}</p>
   @if (filled($template['intro']))
@@ -14,17 +14,14 @@
   </p>
 
   @foreach ($order->items as $item)
-    <h2 style="font-size: 17px; margin-top: 24px;">{{ $item->product_name_snapshot }} — {{ $item->ticket_type_name_snapshot }}</h2>
-    @if ($item->ticketType?->product?->start_at)
-      <p style="margin: 0 0 8px;">Jadwal: {{ $item->ticketType->product->start_at->translatedFormat('d F Y, H:i') }}</p>
-    @endif
-    @php $frame = ($itemTemplates[$item->id] ?? $template)['accent_color']; @endphp
     @foreach ($item->tickets as $ticket)
-      <div style="margin: 16px 0; padding: 16px; border: 1px solid {{ $frame }}; border-radius: 12px; text-align: center;">
-        <p style="margin: 0 0 12px;">Kode tiket: <strong>{{ $ticket->ticket_code }}</strong></p>
-        <img src="{{ $message->embedData($qrCodes[$ticket->id], 'ticket-'.$ticket->id.'.png', 'image/png') }}"
-             width="520" alt="E-ticket {{ $item->product_name_snapshot }} — {{ $item->ticket_type_name_snapshot }} — {{ $ticket->ticket_code }}"
-             style="display: block; margin: 0 auto; width: 520px; max-width: 100%; height: auto; border: 0;">
+      <div style="margin: 20px 0; text-align: center;">
+        <img src="{{ $message->embedData($ticketImages[$ticket->id], 'tiket-'.$ticket->ticket_code.'.png', 'image/png') }}"
+             width="560" alt="E-tiket {{ $item->product_name_snapshot }} - {{ $item->ticket_type_name_snapshot }} - {{ $ticket->ticket_code }}"
+             style="display: block; width: 100%; max-width: 560px; height: auto; border: 0; margin: 0 auto;">
+        <p style="margin: 8px 0 0; font-size: 13px; color: #6B7280;">
+          {{ $item->product_name_snapshot }} &middot; {{ $item->ticket_type_name_snapshot }} &middot; Kode tiket: <strong>{{ $ticket->ticket_code }}</strong>
+        </p>
       </div>
     @endforeach
   @endforeach
