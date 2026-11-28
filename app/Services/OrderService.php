@@ -112,10 +112,21 @@ class OrderService
             }
 
             foreach ($locked->items()->orderBy('ticket_type_id')->get() as $item) {
-                TicketType::withTrashed()
+                $type = TicketType::withTrashed()
                     ->whereKey($item->ticket_type_id)
-                    ->where('reserved', '>=', $item->quantity)
-                    ->decrement('reserved', $item->quantity);
+                    ->lockForUpdate()
+                    ->first();
+
+                // Never close an order if its reservation cannot be fully released.
+                // The previous conditional decrement silently did nothing when stock data
+                // drifted, leaving reserved tickets stranded on a cancelled/expired order.
+                if (! $type || $type->reserved < $item->quantity) {
+                    throw ValidationException::withMessages([
+                        'order' => 'Stok yang dicadangkan tidak sesuai. Pesanan belum dapat dibatalkan; periksa inventaris terlebih dahulu.',
+                    ]);
+                }
+
+                $type->decrement('reserved', $item->quantity);
             }
 
             $locked->update(['status' => $newStatus]);

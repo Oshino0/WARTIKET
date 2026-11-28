@@ -216,6 +216,24 @@ class GuestCheckoutTest extends TestCase
         Mail::assertNothingSent();
     }
 
+    public function test_order_release_does_not_close_an_order_when_its_reservation_is_missing(): void
+    {
+        $type = $this->ticketType();
+        $buyer = $this->user(User::ROLE_CUSTOMER, 'release-test@example.test');
+        $order = app(\App\Services\OrderService::class)->create($buyer, [$type->id => 1]);
+        $type->update(['reserved' => 0]);
+
+        try {
+            app(\App\Services\OrderService::class)->release($order);
+            $this->fail('A reservation mismatch must prevent the order from being closed.');
+        } catch (\Illuminate\Validation\ValidationException $exception) {
+            $this->assertArrayHasKey('order', $exception->errors());
+        }
+
+        $this->assertSame(Order::PENDING, $order->fresh()->status);
+        $this->assertSame(0, $type->fresh()->reserved);
+    }
+
     public function test_admin_can_reject_guest_order_and_release_reserved_stock(): void
     {
         [$order, $type] = $this->placeGuestOrder(quantity: 2);

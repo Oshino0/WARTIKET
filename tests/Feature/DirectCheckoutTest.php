@@ -49,6 +49,24 @@ class DirectCheckoutTest extends TestCase
         $this->assertSame(0, $type->fresh()->reserved, 'nothing is reserved until the order is placed');
     }
 
+    public function test_ticket_checkout_opens_when_sale_start_has_passed_in_jakarta_time(): void
+    {
+        config(['app.timezone' => 'Asia/Jakarta']);
+        date_default_timezone_set('Asia/Jakarta');
+
+        $type = $this->ticketType('Festival Jakarta', 'Reguler', 100000);
+        $type->update(['sale_start' => now()->subMinutes(5)]);
+
+        $this->get(route('products.show', $type->product))
+            ->assertOk()
+            ->assertSee('Checkout')
+            ->assertDontSee('Dibuka');
+
+        $this->get(route('checkout.review', ['items' => [$type->id => 1]]))
+            ->assertOk()
+            ->assertSee('Festival Jakarta');
+    }
+
     public function test_checkout_rejects_more_tickets_than_are_left(): void
     {
         $type = $this->ticketType('Small Show', 'Reguler', 50000, quota: 1);
